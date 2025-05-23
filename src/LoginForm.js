@@ -29,21 +29,18 @@ function Login({ setAuth }) {
       {/* LOGIN BOX CONTAINER */}
       <div className="main-layout">
         <div className="left-box">
-          
-            <a href="#" className="card-link">
-              <div className="card-shadow">PVMGO</div>
-            </a>
-            <a href="#" className="card-link">
-              <div className="card-shadow">SCHOOL</div>
-            </a>
-            <a href="#" className="card-link">
-              <div className="card-shadow">INFORMATION</div>
-            </a>
-          
+          <a href="#" className="card-link">
+            <div className="card-shadow">PVMGO</div>
+          </a>
+          <a href="#" className="card-link">
+            <div className="card-shadow">SCHOOL</div>
+          </a>
+          <a href="#" className="card-link">
+            <div className="card-shadow">INFORMATION</div>
+          </a>
         </div>
-        
+
         <div className="card login-container">
-        
           <img src="/CPESS.png" alt="CPESS Logo" className="logo" />
           <form onSubmit={handleLogin}>
             <div className="studentID">
@@ -76,17 +73,23 @@ function Login({ setAuth }) {
           <div className="inbox1">
             <h3>Vision</h3>
             <p>
-              We envision the University of Batangas to be a center of
-              educational excellence committed to serve the broader community.
+              The Computer Engineering Department envisions to be recognized as
+              one of the leading providers of competitive IT professionals in
+              various IT related industries both locally and internationally.It
+              commits itself in delivering quality education, and thus, strives
+              to become a center of excellence.
             </p>
           </div>
           <div className="inbox2">
             <h3>Mission</h3>
             <p>
-              The University of Batangas provides quality education by promoting
-              personal and professional growth, thus enabling the person to
-              participate in a global, technology and research-driven
-              environment.
+              The Computer Engineering department is committed in preparing its
+              graduates for professional computer engineering careers which
+              includes leading roles in the design, analysis and application of
+              computing structures that involve hardware and software. The
+              graduates must have a strong foundation in their education in
+              order to participate in a global, technological, and
+              research-driven environment.
             </p>
           </div>
         </div>
