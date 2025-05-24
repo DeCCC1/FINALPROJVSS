@@ -1,8 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-function Schedules({ setAuth }) {
-  const navigate = useNavigate();
+import { NavLink } from "react-router-dom";
 
+function Schedule({ setAuth }) {
   const scheduleData = [
     { day: "Monday", time: "8:00 AM - 10:00 AM", subject: "Software Design" },
     {
@@ -26,40 +25,64 @@ function Schedules({ setAuth }) {
           <ul className="sidebar-section">
             <li className="sidebar-section-title">Main Menu</li>
             <li>
-              <a
-                className="sidebar-link"
-                onClick={() => navigate("/Dashboard")}
+              <NavLink
+                to="/Dashboard"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
               >
                 Dashboard
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a className="sidebar-link" onClick={() => navigate("/subjects")}>
-                Subjects
-              </a>
-            </li>
-            <li>
-              <a className="sidebar-link" onClick={() => navigate("/grades")}>
-                Grades
-              </a>
-            </li>
-            <li>
-              <a
-                className="sidebar-link active"
-                onClick={() => navigate("/schedules")}
+              <NavLink
+                to="/subjects"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
               >
-                Schedules
-              </a>
+                Subjects
+              </NavLink>
             </li>
             <li>
-              <a className="sidebar-link" onClick={() => navigate("#")}>
+              <NavLink
+                to="/grades"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
+              >
+                Grades
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/schedule"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
+              >
+                Schedule
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/announcements"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
+              >
                 Announcements
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a className="sidebar-link" onClick={() => navigate("#")}>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
+              >
                 Profile
-              </a>
+              </NavLink>
             </li>
           </ul>
         </nav>
@@ -67,7 +90,7 @@ function Schedules({ setAuth }) {
 
       <div className="main-content">
         <header className="main-header">
-          <h1>Class Schedules</h1>
+          <h1>Class Schedule</h1>
         </header>
 
         <section className="dashboard-panel">
@@ -123,4 +146,4 @@ function Schedules({ setAuth }) {
   );
 }
 
-export default Schedules;
+export default Schedule;
