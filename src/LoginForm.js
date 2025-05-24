@@ -37,7 +37,7 @@ function Login({ setAuth }) {
           <a href="https://ub.edu.ph" className="card-link">
             <div className="card-shadow">SCHOOL</div>
           </a>
-          <a href="https://ub.edu.ph/ubbc/college-of-education/" className="card-link">
+          <a href="https://ub.edu.ph/ubbc/engineering/" className="card-link">
             <div className="card-shadow">INFORMATION</div>
           </a>
         </div>
