@@ -1,9 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function Announcements({ setAuth }) {
-  const navigate = useNavigate();
-
   const announcementsData = [
     {
       date: "2025-05-20",
@@ -30,43 +29,64 @@ function Announcements({ setAuth }) {
           <ul className="sidebar-section">
             <li className="sidebar-section-title">Main Menu</li>
             <li>
-              <a
-                className="sidebar-link"
-                onClick={() => navigate("/Dashboard")}
+              <NavLink
+                to="/Dashboard"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
               >
                 Dashboard
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a className="sidebar-link" onClick={() => navigate("/subjects")}>
-                Subjects
-              </a>
-            </li>
-            <li>
-              <a className="sidebar-link" onClick={() => navigate("/grades")}>
-                Grades
-              </a>
-            </li>
-            <li>
-              <a
-                className="sidebar-link"
-                onClick={() => navigate("/schedules")}
+              <NavLink
+                to="/subjects"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
               >
-                Schedules
-              </a>
+                Subjects
+              </NavLink>
             </li>
             <li>
-              <a
-                className="sidebar-link active"
-                onClick={() => navigate("/announcements")}
+              <NavLink
+                to="/grades"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
+              >
+                Grades
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/schedule" // <-- fixed route here
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
+              >
+                Schedule
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/announcements"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
               >
                 Announcements
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a className="sidebar-link" onClick={() => navigate("/profile")}>
+              <NavLink
+                to="/profile"
+                className={({ isActive }) =>
+                  isActive ? "sidebar-link active" : "sidebar-link"
+                }
+              >
                 Profile
-              </a>
+              </NavLink>
             </li>
           </ul>
         </nav>
