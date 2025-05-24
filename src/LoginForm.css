@@ -1,3 +1,5 @@
+/*Updated*/
+
 .App {
   text-align: center;
 }
@@ -67,6 +69,9 @@ button:hover {
 .main-layout{
   background: linear-gradient(to bottom, #752738 0%, #808080 100%);
   Background-size: Cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 input,
 .studentID,
@@ -126,12 +131,13 @@ input {
 
 .left-box {
   width: 25%;
-  margin-top: 100px;
+  margin-top: 40px;
   padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 100px;
   border-radius: 10px;
+  
 }
 
 .left-box .card-shadow {
@@ -167,7 +173,8 @@ input {
 
 .right-box {
   width: 70%;
-  height: 115vh;
+  height: 20%;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -197,6 +204,9 @@ p {
 }
 
 .card {
+  
+  
+  
   padding: 20px;
   width: 300px;
   box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.5);
@@ -360,10 +370,9 @@ p {
     align-items: stretch;
     gap: 40px;
     padding: 40px;
-    height: 100vh; 
     max-width: 1800px;
+    max-height: 1800px;
     margin: 0 auto;
-    
   }
 
   .left-box,
