@@ -31,13 +31,13 @@ function Login({ setAuth }) {
       {/* LOGIN BOX CONTAINER */}
       <div className="main-layout">
         <div className="left-box">
-          <a href="#" className="card-link">
+          <a href="https://ub.edu.ph/ubbc/about/" className="card-link">
             <div className="card-shadow">PVMGO</div>
           </a>
-          <a href="#" className="card-link">
+          <a href="https://ub.edu.ph" className="card-link">
             <div className="card-shadow">SCHOOL</div>
           </a>
-          <a href="#" className="card-link">
+          <a href="https://ub.edu.ph/ubbc/college-of-education/" className="card-link">
             <div className="card-shadow">INFORMATION</div>
           </a>
         </div>
