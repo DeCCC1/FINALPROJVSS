@@ -15,6 +15,8 @@ function Login({ setAuth }) {
       navigate("/dashboard"); // ✅ Navigate to dashboard
     } else {
       alert("Invalid credentials");
+      setStudentID("");
+      setPassword("");
     }
   };
 
