@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Dashboard({ setAuth }) {
   const navigate = useNavigate();
@@ -13,10 +14,11 @@ function Dashboard({ setAuth }) {
         <nav>
           <ul className="sidebar-section">
             <li className="sidebar-section-title">Main Menu</li>
+
             <li>
-              <a href="#" className="sidebar-link active">
+              <Link to="/Dashboard" className="sidebar-link active">
+                {/* Home Icon */}
                 <span className="sidebar-icon">
-                  {/* Home Icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -28,12 +30,13 @@ function Dashboard({ setAuth }) {
                   </svg>
                 </span>
                 Dashboard
-              </a>
+              </Link>
             </li>
+
             <li>
-              <a href="#" className="sidebar-link">
+              <Link to="/subjects" className="sidebar-link">
+                {/* Subjects Icon */}
                 <span className="sidebar-icon">
-                  {/* Subjects Icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -44,12 +47,13 @@ function Dashboard({ setAuth }) {
                   </svg>
                 </span>
                 Subjects
-              </a>
+              </Link>
             </li>
+
             <li>
-              <a href="#" className="sidebar-link">
+              <Link to="/grades" className="sidebar-link">
+                {/* Grades Icon */}
                 <span className="sidebar-icon">
-                  {/* Grades Icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -61,12 +65,13 @@ function Dashboard({ setAuth }) {
                   </svg>
                 </span>
                 Grades
-              </a>
+              </Link>
             </li>
+
             <li>
-              <a href="#" className="sidebar-link">
+              <Link to="/schedule" className="sidebar-link">
+                {/* Schedule Icon */}
                 <span className="sidebar-icon">
-                  {/* Calendar/Schedule Icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -77,12 +82,13 @@ function Dashboard({ setAuth }) {
                   </svg>
                 </span>
                 Schedule
-              </a>
+              </Link>
             </li>
+
             <li>
-              <a href="#" className="sidebar-link">
+              <Link to="/announcements" className="sidebar-link">
+                {/* Announcements Icon */}
                 <span className="sidebar-icon">
-                  {/* Announcements Icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -93,12 +99,13 @@ function Dashboard({ setAuth }) {
                   </svg>
                 </span>
                 Announcements
-              </a>
+              </Link>
             </li>
+
             <li>
-              <a href="#" className="sidebar-link">
+              <Link to="/profile" className="sidebar-link">
+                {/* Profile Icon */}
                 <span className="sidebar-icon">
-                  {/* Profile Icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -109,7 +116,7 @@ function Dashboard({ setAuth }) {
                   </svg>
                 </span>
                 Profile
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>
