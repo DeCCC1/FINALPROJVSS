@@ -6,6 +6,7 @@ import Subjects from "./Subjects";
 import Grades from "./Grades";
 import Schedule from "./Schedule";
 import Announcements from "./Announcements";
+import ProfessorDashboard from "./ProfessorDashboard";
 import "./App.css";
 import "./LoginForm.css";
 import "./Dashboard.css";
@@ -36,6 +37,10 @@ function App() {
         <Route
           path="/announcements"
           element={<Announcements setAuth={setIsAuthenticated} />}
+        />
+        <Route
+          path="/prof-dashboard"
+          element={<ProfessorDashboard setAuth={setIsAuthenticated} />}
         />
       </Routes>
     </BrowserRouter>
