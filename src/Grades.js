@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 
-function Grades() {
+function Grades({ setAuth }) {
   const navigate = useNavigate();
 
   const gradesData = [
@@ -91,63 +91,53 @@ function Grades() {
           <h1>Grades</h1>
         </header>
 
-        <section className="dashboard-grid">
-          <div className="dashboard-panel main-view">
-            <h2>Grades Overview</h2>
-            <table
-              className="grades-table"
-              style={{ width: "100%", borderCollapse: "collapse" }}
-            >
-              <thead>
-                <tr>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "8px",
-                      textAlign: "left",
-                    }}
-                  >
-                    Subject
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "8px",
-                      textAlign: "left",
-                    }}
-                  >
-                    Grade
-                  </th>
-                  <th
-                    style={{
-                      borderBottom: "2px solid #ccc",
-                      padding: "8px",
-                      textAlign: "left",
-                    }}
-                  >
-                    Remarks
-                  </th>
+        <section className="dashboard-panel">
+          <h2>Grades Overview</h2>
+          <table
+            className="grades-table"
+            style={{ width: "100%", borderCollapse: "collapse" }}
+          >
+            <thead>
+              <tr>
+                <th
+                  style={{
+                    padding: "8px",
+                    borderBottom: "2px solid #ccc",
+                    textAlign: "left",
+                  }}
+                >
+                  Subject
+                </th>
+                <th
+                  style={{
+                    padding: "8px",
+                    borderBottom: "2px solid #ccc",
+                    textAlign: "left",
+                  }}
+                >
+                  Grade
+                </th>
+                <th
+                  style={{
+                    padding: "8px",
+                    borderBottom: "2px solid #ccc",
+                    textAlign: "left",
+                  }}
+                >
+                  Remarks
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {gradesData.map(({ subject, grade, remarks }, index) => (
+                <tr key={index} style={{ borderBottom: "1px solid #eee" }}>
+                  <td style={{ padding: "8px" }}>{subject}</td>
+                  <td style={{ padding: "8px" }}>{grade}</td>
+                  <td style={{ padding: "8px" }}>{remarks}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {gradesData.map(({ subject, grade, remarks }, index) => (
-                  <tr
-                    key={index}
-                    style={{
-                      borderBottom: "1px solid #eee",
-                    }}
-                  >
-                    <td style={{ padding: "8px" }}>{subject}</td>
-                    <td style={{ padding: "8px" }}>{grade}</td>
-                    <td style={{ padding: "8px" }}>{remarks}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="dashboard-panel secondary-view">
-            {/* Optional: add extra info or notifications */}
-          </div>
+              ))}
+            </tbody>
+          </table>
         </section>
       </div>
     </div>
