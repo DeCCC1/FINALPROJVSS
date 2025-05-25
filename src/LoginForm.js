@@ -10,9 +10,11 @@ function Login({ setAuth }) {
     e.preventDefault();
 
     if (studentID === "1600307" && password === "password") {
-      
       setAuth(true); // ✅ Set authentication state
       navigate("/dashboard"); // ✅ Navigate to dashboard
+    } else if (studentID === "prof123" && password === "adminpass") {
+      setAuth({ role: "professor" });
+      navigate("/prof-dashboard");
     } else {
       alert("Invalid credentials");
       setStudentID("");
