@@ -79,7 +79,7 @@ function Login({ setAuth }) {
             <p>
               The Computer Engineering Department envisions to be recognized as
               one of the leading providers of competitive IT professionals in
-              various IT related industries both locally and internationally.It
+              various IT related industries both locally and internationally. It
               commits itself in delivering quality education, and thus, strives
               to become a center of excellence.
             </p>
