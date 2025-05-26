@@ -182,7 +182,7 @@ function ProfessorDashboard({ setAuth }) {
     }
 
     alert(
-      `Status for ${selectedStudent.name} in ${selectedSubjectFromList} saved as '${status}'.`
+  `Status for ${selectedStudent.name} in ${selectedSubjectFromList} saved as '${status}';`
     );
   };
 
@@ -741,7 +741,7 @@ function ProfessorDashboard({ setAuth }) {
                         }}
                         title={
                           studentStatus
-                            ? `Status: ${studentStatus}`
+                            ? 'Status: ${studentStatus}'
                             : "Click to edit status"
                         }
                       >
