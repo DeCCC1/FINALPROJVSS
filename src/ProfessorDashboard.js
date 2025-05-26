@@ -160,6 +160,8 @@ function ProfessorDashboard({ setAuth }) {
           style={{ height: "75px", objectFit: "contain" }}
         />
 
+        <img src="/UBLOGO.png" alt="UB Logo" className="logo3" />
+
         <div ref={dropdownRef} style={{ position: "relative" }}>
           <button
             onClick={() => setDropdownVisible((prev) => !prev)}
@@ -507,6 +509,9 @@ function ProfessorDashboard({ setAuth }) {
           </ul>
         </div>
       </div>
+      <div className="dashboard-footer">
+  © 2025 CPESS Student Portal. All rights reserved.
+</div>
     </div>
   );
 }
