@@ -13,7 +13,7 @@ function Dashboard({ setAuth }) {
       { id: 1, name: "Quiz 1", status: "Turned In" },
       { id: 2, name: "Assignment 1", status: "Turned In" },
     ],
-    WD: [
+    SD: [
       { id: 3, name: "Responsive Web", status: "Turned In" },
       { id: 4, name: "Midterm Exam", status: "Not Turned In" },
     ],
@@ -36,7 +36,7 @@ function Dashboard({ setAuth }) {
       name: "Engr. Derrick Ramos",
       email: "sample.email.com",
     },
-    WD: {
+    SD: {
       name: "Engr. Derrick Ramos",
       email: "sample.email.com",
     },
@@ -91,6 +91,8 @@ function Dashboard({ setAuth }) {
           alt="CPESS Logo"
           style={{ height: "75px", cursor: "pointer" }}
         />
+
+        <img src="/UBLOGO.png" alt="UB Logo" className="logo3" />
 
         {/* Student name dropdown */}
         <div ref={dropdownRef} style={{ position: "relative" }}>
@@ -342,8 +344,15 @@ function Dashboard({ setAuth }) {
           </div>
         </div>
       </div>
+<div className="dashboard-footer">
+  © 2025 CPESS Student Portal. All rights reserved.
+</div>
     </div>
+
+
+      
   );
+
 }
 
 export default Dashboard;
