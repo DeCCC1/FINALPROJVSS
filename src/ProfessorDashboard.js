@@ -6,6 +6,14 @@ function ProfessorDashboard({ setAuth }) {
   const professorName = "Derrick Ramos";
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const dropdownRef = useRef();
+  const [subjectList, setSubjectList] = useState([]);
+  const [showAddStudentForm, setShowAddStudentForm] = useState(false);
+  const [selectedSubjectFromList, setSelectedSubjectFromList] = useState(null);
+  const [subjectStudents, setSubjectStudents] = useState({});
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [status, setStatus] = useState("");
+  const [statuses, setStatuses] = useState({}); // {subject: {studentId: status}}
+  const [activities, setActivities] = useState({}); // { "subject-studentId": [activity1, ...] }
 
   const handleLogout = () => {
     setAuth(false);
@@ -43,102 +51,161 @@ function ProfessorDashboard({ setAuth }) {
     },
   ];
 
-  const [selectedStudent, setSelectedStudent] = useState(null);
-  const [selectedSubject, setSelectedSubject] = useState(null);
-  const [status, setStatus] = useState("");
-  const [statuses, setStatuses] = useState({});
-  // New state: activities per student per subject (array of strings)
-  const [activities, setActivities] = useState({});
+  // Filter out the specified students
+  const filteredStudents = students.filter(
+    (student) => !["1600307", "1600311", "1600315"].includes(student.id)
+  );
 
-  const handleSelectStudent = (student) => {
-    setSelectedStudent(student);
-    setSelectedSubject(null);
+  const handleSelectSubjectFromList = (subject) => {
+    setSelectedSubjectFromList(subject);
+    setShowAddStudentForm(false);
+    setSelectedStudent(null);
     setStatus("");
   };
 
-  const handleSelectSubject = (subject) => {
-    setSelectedSubject(subject);
+  const handleAddStudentToSubject = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const studentName = form.studentName.value.trim();
+    const studentId = form.studentId.value.trim();
 
-    if (
-      selectedStudent &&
-      statuses[selectedStudent.id] &&
-      statuses[selectedStudent.id][subject]
-    ) {
-      setStatus(statuses[selectedStudent.id][subject]);
-    } else {
-      setStatus("");
-    }
+    if (!studentName || !studentId) return;
+
+    setSubjectStudents((prev) => {
+      const currentStudents = prev[selectedSubjectFromList] || [];
+      if (currentStudents.some((s) => s.id === studentId)) {
+        alert("Student ID already exists for this subject.");
+        return prev;
+      }
+      return {
+        ...prev,
+        [selectedSubjectFromList]: [
+          ...currentStudents,
+          { id: studentId, name: studentName },
+        ],
+      };
+    });
+
+    form.reset();
+    setShowAddStudentForm(false);
   };
+
+  const handleSelectStudent = (student) => {
+    setSelectedStudent(student);
+    const subjectStatus =
+      statuses[selectedSubjectFromList] &&
+      statuses[selectedSubjectFromList][student.id];
+    setStatus(subjectStatus || "");
+
+    // Load saved activities or empty
+    const key = selectedSubjectFromList + "-" + student.id;
+    const savedActivities = activities[key] || [];
+    setCurrentActivities(savedActivities);
+  };
+
+  // Activities for current student/subject in editing form
+  const [currentActivities, setCurrentActivities] = useState([]);
 
   const handleStatusChange = (e) => {
-    setStatus(e.target.value);
-  };
-
-  // Add or update an activity input
-  const handleActivityChange = (index, value) => {
-    if (!selectedStudent || !selectedSubject) return;
-
-    const key = selectedStudent.id + "-" + selectedSubject;
-    setActivities((prev) => {
-      const currentActivities = prev[key] ? [...prev[key]] : [];
-      currentActivities[index] = value;
-      return {
-        ...prev,
-        [key]: currentActivities,
-      };
-    });
-  };
-
-  // Add new empty activity input row
-  const addActivityRow = () => {
-    if (!selectedStudent || !selectedSubject) return;
-
-    const key = selectedStudent.id + "-" + selectedSubject;
-    setActivities((prev) => {
-      const currentActivities = prev[key] ? [...prev[key]] : [];
-      return {
-        ...prev,
-        [key]: [...currentActivities, ""],
-      };
-    });
-  };
-
-  // Remove an activity row
-  const removeActivityRow = (index) => {
-    if (!selectedStudent || !selectedSubject) return;
-
-    const key = selectedStudent.id + "-" + selectedSubject;
-    setActivities((prev) => {
-      const currentActivities = prev[key] ? [...prev[key]] : [];
-      currentActivities.splice(index, 1);
-      return {
-        ...prev,
-        [key]: currentActivities,
-      };
-    });
-  };
-
-  const handleSave = () => {
-    if (selectedStudent && selectedSubject && status) {
-      setStatuses((prev) => ({
-        ...prev,
-        [selectedStudent.id]: {
-          ...prev[selectedStudent.id],
-          [selectedSubject]: status,
-        },
-      }));
-
-      alert(
-        `Saved: ${selectedStudent.name} - ${selectedSubject} marked as ${status}`
-      );
+    const newStatus = e.target.value;
+    setStatus(newStatus);
+    // Clear activities if status changed to Complete
+    if (newStatus === "Complete") {
+      setCurrentActivities([]);
     }
   };
 
-  // Get activities for currently selected student & subject
-  const currentActivities =
-    selectedStudent && selectedSubject
-      ? activities[selectedStudent.id + "-" + selectedSubject] || []
-      : [];
+  const handleActivityChange = (index, value) => {
+    const updatedActivities = [...currentActivities];
+    updatedActivities[index] = value;
+    setCurrentActivities(updatedActivities);
+  };
+
+  const addActivityRow = () => {
+    setCurrentActivities((prev) => [...prev, ""]);
+  };
+
+  const removeActivityRow = (index) => {
+    const updatedActivities = [...currentActivities];
+    updatedActivities.splice(index, 1);
+    setCurrentActivities(updatedActivities);
+  };
+
+  const canSave = () => {
+    if (!selectedStudent || !selectedSubjectFromList) return false;
+    const currentStatus =
+      statuses[selectedSubjectFromList] &&
+      statuses[selectedSubjectFromList][selectedStudent.id];
+    // Save if status changed or activities changed (only when Incomplete)
+    if (status !== currentStatus) return true;
+    if (status === "Incomplete") {
+      const key = selectedSubjectFromList + "-" + selectedStudent.id;
+      const savedActivities = activities[key] || [];
+      // Compare arrays to detect changes
+      if (savedActivities.length !== currentActivities.length) return true;
+      for (let i = 0; i < savedActivities.length; i++) {
+        if (savedActivities[i] !== currentActivities[i]) return true;
+      }
+    }
+    return false;
+  };
+
+  const handleSaveStatus = () => {
+    if (!canSave()) return;
+
+    setStatuses((prev) => {
+      const existingStatus = prev[selectedSubjectFromList] || {};
+      return {
+        ...prev,
+        [selectedSubjectFromList]: {
+          ...existingStatus,
+          [selectedStudent.id]: status,
+        },
+      };
+    });
+
+    if (status === "Incomplete") {
+      const key = selectedSubjectFromList + "-" + selectedStudent.id;
+      setActivities((prev) => ({
+        ...prev,
+        [key]: currentActivities.filter((a) => a.trim() !== ""),
+      }));
+    } else {
+      // On Complete, clear activities for this student+subject
+      const key = selectedSubjectFromList + "-" + selectedStudent.id;
+      setActivities((prev) => {
+        const copy = { ...prev };
+        delete copy[key];
+        return copy;
+      });
+      setCurrentActivities([]);
+    }
+
+    alert(
+      `Status for ${selectedStudent.name} in ${selectedSubjectFromList} saved as '${status}'.`
+    );
+  };
+
+  const handleRemoveStudentFromSubject = (studentIdToRemove) => {
+    if (!selectedSubjectFromList) return;
+
+    setSubjectStudents((prev) => {
+      const currentStudents = prev[selectedSubjectFromList] || [];
+      const newStudents = currentStudents.filter(
+        (s) => s.id !== studentIdToRemove
+      );
+      return {
+        ...prev,
+        [selectedSubjectFromList]: newStudents,
+      };
+    });
+
+    if (selectedStudent && selectedStudent.id === studentIdToRemove) {
+      setSelectedStudent(null);
+      setStatus("");
+      setCurrentActivities([]);
+    }
+  };
 
   return (
     <div className="prof-dashboard-root">
@@ -159,8 +226,6 @@ function ProfessorDashboard({ setAuth }) {
           alt="CPESS Logo"
           style={{ height: "75px", objectFit: "contain" }}
         />
-
-        <img src="/UBLOGO.png" alt="UB Logo" className="logo3" />
 
         <div ref={dropdownRef} style={{ position: "relative" }}>
           <button
@@ -236,7 +301,7 @@ function ProfessorDashboard({ setAuth }) {
           minHeight: "100vh",
         }}
       >
-        {/* LEFT: Student Info */}
+        {/* LEFT: Subjects List on top, Add Subject below */}
         <div
           className="prof-left-box-dashboard"
           style={{
@@ -246,51 +311,79 @@ function ProfessorDashboard({ setAuth }) {
             borderRight: "1px solid #ddd",
           }}
         >
-          <h2 style={{ color: "#771100" }}>STUDENT INFO</h2>
-          {selectedStudent ? (
-            <>
-              <p>
-                <strong>Name:</strong> {selectedStudent.name}
-              </p>
-              <p>
-                <strong>Student ID:</strong> {selectedStudent.id}
-              </p>
-              <p>
-                <strong>Course:</strong> {selectedStudent.course}
-              </p>
-              <p>
-                <strong>Subjects:</strong>
-              </p>
-              <ul style={{ paddingLeft: "20px" }}>
-                {selectedStudent.subjects.map((subject) => {
-                  const subjectStatus =
-                    statuses[selectedStudent.id]?.[subject] || null;
-
-                  return (
-                    <li
-                      key={subject}
-                      onClick={() => handleSelectSubject(subject)}
-                      style={{
-                        cursor: "pointer",
-                        textDecoration:
-                          selectedSubject === subject ? "underline" : "none",
-                        color: selectedSubject === subject ? "blue" : "black",
-                        marginBottom: "2px",
-                        fontSize: "13px",
-                      }}
-                    >
-                      {subject} {subjectStatus && `(${subjectStatus})`}
-                    </li>
-                  );
-                })}
-              </ul>
-            </>
+          <h2 style={{ color: "#771100" }}>SUBJECTS LIST</h2>
+          {subjectList.length > 0 ? (
+            <ul style={{ paddingLeft: "20px" }}>
+              {subjectList.map((subj, idx) => (
+                <li
+                  key={idx}
+                  style={{
+                    fontSize: "14px",
+                    marginBottom: "5px",
+                    cursor: "pointer",
+                    textDecoration:
+                      selectedSubjectFromList === subj ? "underline" : "none",
+                    color: selectedSubjectFromList === subj ? "blue" : "black",
+                  }}
+                  onClick={() => {
+                    handleSelectSubjectFromList(subj);
+                    setSelectedStudent(null);
+                    setStatus("");
+                    setCurrentActivities([]);
+                  }}
+                >
+                  {subj}
+                </li>
+              ))}
+            </ul>
           ) : (
-            <p>Select a student from the right</p>
+            <p style={{ color: "#999" }}>No subjects added yet.</p>
           )}
+
+          <div style={{ marginTop: "30px" }}>
+            <h3 style={{ color: "#771100" }}>ADD SUBJECT</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const newSubject = e.target.subject.value.trim();
+                if (!newSubject || subjectList.includes(newSubject)) return;
+
+                setSubjectList((prev) => [...prev, newSubject]);
+                e.target.reset();
+              }}
+            >
+              <input
+                type="text"
+                name="subject"
+                placeholder="Enter new subject"
+                required
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc",
+                  marginBottom: "10px",
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#771100",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                Add Subject
+              </button>
+            </form>
+          </div>
         </div>
 
-        {/* CENTER: Edit Status and Activities */}
+        {/* CENTER: Status form with activities if Incomplete */}
         <div
           className="prof-center-box-dashboard"
           style={{
@@ -298,25 +391,20 @@ function ProfessorDashboard({ setAuth }) {
             padding: "20px",
             backgroundColor: "#fff",
             borderRight: "1px solid #ddd",
+            overflowY: "auto",
           }}
         >
-          <h2 style={{ color: "#771100" }}>EDIT STATUS</h2>
-          {selectedStudent && selectedSubject ? (
+          {selectedStudent && selectedSubjectFromList ? (
             <>
-              <p>
-                <strong>{selectedStudent.name}</strong> - {selectedSubject}
-              </p>
-
+              <h2 style={{ color: "#771100" }}>
+                {selectedStudent.name} - {selectedSubjectFromList}
+              </h2>
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "20px",
                   marginTop: "10px",
-                  flexWrap: "wrap",
                 }}
               >
-                <label>
+                <label style={{ marginRight: "15px" }}>
                   <input
                     type="radio"
                     value="Complete"
@@ -334,32 +422,10 @@ function ProfessorDashboard({ setAuth }) {
                   />{" "}
                   Incomplete
                 </label>
-
-                <button
-                  onClick={handleSave}
-                  style={{
-                    padding: "10px 20px",
-                    backgroundColor: "#771100",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "10px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                    transition: "background-color 0.3s ease",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#a30000")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#771100")
-                  }
-                >
-                  Save Status
-                </button>
               </div>
 
               {status === "Incomplete" && (
-                <div style={{ marginTop: "30px" }}>
+                <div style={{ marginTop: "20px" }}>
                   <h3 style={{ color: "#771100" }}>Activities to Complete</h3>
 
                   <table
@@ -473,45 +539,268 @@ function ProfessorDashboard({ setAuth }) {
                   </button>
                 </div>
               )}
+
+              {canSave() && (
+                <button
+                  onClick={handleSaveStatus}
+                  style={{
+                    marginTop: "20px",
+                    padding: "10px 20px",
+                    backgroundColor: "#771100",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "10px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#a30000")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#771100")
+                  }
+                >
+                  Save
+                </button>
+              )}
             </>
           ) : (
-            <p>Select a subject from the left to edit status</p>
+            <p>Select a student from the right to edit their status</p>
           )}
         </div>
 
-        {/* RIGHT: Student List */}
+        {/* RIGHT: List students for selected subject with status, and add students UI */}
         <div
           className="prof-right-box-dashboard"
           style={{
             flex: 1,
             padding: "20px",
             backgroundColor: "#fff5f0",
+            overflowY: "auto",
           }}
         >
-          <h2 style={{ color: "#771100" }}>STUDENTS</h2>
-          <ul style={{ paddingLeft: 0 }}>
-            {students.map((student) => (
-              <li
-                key={student.id}
-                onClick={() => handleSelectStudent(student)}
-                style={{
-                  cursor: "pointer",
-                  textDecoration:
-                    selectedStudent?.id === student.id ? "underline" : "none",
-                  color: selectedStudent?.id === student.id ? "blue" : "black",
-                  marginBottom: "5px",
-                  listStyle: "none",
-                }}
-              >
-                {student.name} ({student.id})
-              </li>
-            ))}
-          </ul>
+          {selectedSubjectFromList ? (
+            <>
+              <h2 style={{ color: "#771100" }}>
+                Students in {selectedSubjectFromList}
+              </h2>
+              {!showAddStudentForm && (
+                <button
+                  onClick={() => setShowAddStudentForm(true)}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#771100",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    marginBottom: "20px",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#a30000")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#771100")
+                  }
+                >
+                  Add Students
+                </button>
+              )}
+
+              {showAddStudentForm && (
+                <form onSubmit={handleAddStudentToSubject}>
+                  <div style={{ marginBottom: "10px" }}>
+                    <label
+                      htmlFor="studentName"
+                      style={{ display: "block", marginBottom: "4px" }}
+                    >
+                      Student Name
+                    </label>
+                    <input
+                      id="studentName"
+                      name="studentName"
+                      type="text"
+                      required
+                      placeholder="Enter student name"
+                      style={{
+                        width: "100%",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  </div>
+                  <div style={{ marginBottom: "10px" }}>
+                    <label
+                      htmlFor="studentId"
+                      style={{ display: "block", marginBottom: "4px" }}
+                    >
+                      Student ID
+                    </label>
+                    <input
+                      id="studentId"
+                      name="studentId"
+                      type="text"
+                      required
+                      placeholder="Enter student ID"
+                      style={{
+                        width: "100%",
+                        padding: "8px",
+                        borderRadius: "6px",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "#771100",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "8px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s ease",
+                      marginRight: "10px",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#a30000")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#771100")
+                    }
+                  >
+                    Add Student
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddStudentForm(false)}
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "#ccc",
+                      color: "#333",
+                      border: "none",
+                      borderRadius: "8px",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      transition: "background-color 0.3s ease",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#aaa")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#ccc")
+                    }
+                  >
+                    Cancel
+                  </button>
+                </form>
+              )}
+
+              {subjectStudents[selectedSubjectFromList] &&
+              subjectStudents[selectedSubjectFromList].length > 0 ? (
+                <ul style={{ paddingLeft: 0, listStyle: "none" }}>
+                  {subjectStudents[selectedSubjectFromList].map((student) => {
+                    const studentStatus =
+                      statuses[selectedSubjectFromList] &&
+                      statuses[selectedSubjectFromList][student.id];
+                    return (
+                      <li
+                        key={student.id}
+                        onClick={() => handleSelectStudent(student)}
+                        style={{
+                          marginBottom: "8px",
+                          backgroundColor:
+                            selectedStudent?.id === student.id
+                              ? "#d6eaff"
+                              : "#f9f9f9",
+                          padding: "8px 12px",
+                          borderRadius: "6px",
+                          cursor: "pointer",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          boxShadow:
+                            selectedStudent?.id === student.id
+                              ? "0 0 8px #3399ff"
+                              : "none",
+                          color:
+                            studentStatus === "Complete"
+                              ? "green"
+                              : studentStatus === "Incomplete"
+                              ? "red"
+                              : "black",
+                          fontWeight:
+                            selectedStudent?.id === student.id
+                              ? "bold"
+                              : "normal",
+                        }}
+                        title={
+                          studentStatus
+                            ? `Status: ${studentStatus}`
+                            : "Click to edit status"
+                        }
+                      >
+                        <span>
+                          {student.name} ({student.id})
+                          {studentStatus ? ` (${studentStatus})` : ""}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveStudentFromSubject(student.id);
+                          }}
+                          style={{
+                            backgroundColor: "#cc0000",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            padding: "4px 8px",
+                            marginLeft: "10px",
+                          }}
+                          title="Remove Student"
+                        >
+                          X
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p style={{ color: "#999" }}>
+                  No students added yet for this subject.
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 style={{ color: "#771100" }}>STUDENTS</h2>
+              <ul style={{ paddingLeft: 0, listStyle: "none" }}>
+                {filteredStudents.map((student) => (
+                  <li
+                    key={student.id}
+                    onClick={() =>
+                      alert("Select a subject first to edit student status")
+                    }
+                    style={{
+                      cursor: "not-allowed",
+                      color: "#999",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {student.name} ({student.id})
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </div>
-      <div className="dashboard-footer">
-  © 2025 CPESS Student Portal. All rights reserved.
-</div>
     </div>
   );
 }
