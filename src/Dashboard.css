@@ -497,4 +497,5 @@
   font-weight: 500;
   border-top: 2px solid #d8bb65;
   margin-top: 176px;
+  background: linear-gradient(to bottom, #800000 0%, #808080 100%);
 }
