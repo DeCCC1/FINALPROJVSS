@@ -72,6 +72,7 @@ button:hover {
   background-repeat: no-repeat;
   background-attachment: fixed;
   min-height: 100vh;
+
 }
 input,
 .studentID,
@@ -427,4 +428,15 @@ p {
     padding: 12px 24px;
     font-size: 16px;
   }
+}
+.LoginForm-footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #771100;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  border-top: 1px solid #d8bb65;
+  margin-top: 0px;
+  background: linear-gradient(to bottom, #800000 0%, #808080 100%);
 }
