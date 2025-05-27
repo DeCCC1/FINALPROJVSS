@@ -97,8 +97,13 @@ function Login({ setAuth }) {
             </p>
           </div>
         </div>
+        
       </div>
+      <div className="LoginForm-footer">
+  © 2025 CPESS Student Portal. All rights reserved.
+</div>
     </div>
+    
   );
 }
 
